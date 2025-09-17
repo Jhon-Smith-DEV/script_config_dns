@@ -125,13 +125,13 @@ def configure_named_conf():
 
     # Definir bloque de zonas
     zone_block = f"""
-zone "{DOMAIN}" IN {{
+zone "{DOMAIN}" {{
     type master;
     file "{ZONE_FILE.name}";
     allow-update {{ none; }};
 }};
 
-zone "{REVERSE_ZONE}" IN {{
+zone "{REVERSE_ZONE}" {{
     type master;
     file "{REVERSE_FILE.name}";
     allow-update {{ none; }};
@@ -165,16 +165,17 @@ def verify_config():
 def start_services():
     print("\n=== Iniciando y habilitando servicio named ===")
     run_cmd("systemctl start named")
+    run_cmd("systemctl restart named")
     run_cmd("systemctl enable named")
     run_cmd("systemctl status named --no-pager")
 
 
 def test_queries():
     print("\n=== Realizando consultas de prueba ===")
-    run_cmd(f"nslookup mail.{DOMAIN}")
-    run_cmd(f"nslookup www.{DOMAIN}")
-    run_cmd(f"nslookup ftp.{DOMAIN}")
-    run_cmd(f"nslookup {IP_DNS}")
+    run_cmd(f"nslookup mail.{DOMAIN} {IP_DNS}")
+    run_cmd(f"nslookup www.{DOMAIN} {IP_DNS}")
+    run_cmd(f"nslookup ftp.{DOMAIN} {IP_DNS}")
+    run_cmd(f"nslookup {IP_DNS} {IP_DNS}")
 
 
 def stop_firewalld():
